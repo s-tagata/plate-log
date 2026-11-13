@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: one working column; each program block (1–7) is a card, category pill colors follow the team sheet. Plate colors (IWF) for loading. */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --line:#d9dee7; --fg:#18202c; --muted:#5d6878;
+  --accent:#1f4fbf; --accent-fg:#ffffff; --accent-soft:#e3eafa;
+  --danger:#b4312b; --ok:#23784a; --day:#c00000; --day-fg:#ffffff;
+  --c-cor-bg:#fbd3d3; --c-cor-fg:#a3201b; --c-pow-bg:#c7defa; --c-pow-fg:#1d4f9a; --c-str-bg:#d3eecd; --c-str-fg:#2a6b26;
+  --opt:#1f4fbf; --hl:#d0201a;
+  --p25:#c8302a; --p20:#1f4fbf; --p15:#d9a400; --p10:#2f8a4a; --p5:#f2f2f2; --psm:#8b939f;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12161d; --surface:#1a2029; --line:#2c3441; --fg:#e7ebf1; --muted:#97a2b2;
+  --accent:#6f95f0; --accent-fg:#0d1320; --accent-soft:#1f2b44;
+  --danger:#ef7a73; --ok:#5fc48a; --day:#b3262a; --day-fg:#ffffff;
+  --c-cor-bg:#4a2223; --c-cor-fg:#f6aaa6; --c-pow-bg:#1f3555; --c-pow-fg:#9cc2f5; --c-str-bg:#213d24; --c-str-fg:#a5dca0;
+  --opt:#8cabf4; --hl:#f07a72; --p5:#d8dbe0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161d; --surface:#1a2029; --line:#2c3441; --fg:#e7ebf1; --muted:#97a2b2;
+  --accent:#6f95f0; --accent-fg:#0d1320; --accent-soft:#1f2b44;
+  --danger:#ef7a73; --ok:#5fc48a; --day:#b3262a; --day-fg:#ffffff;
+  --c-cor-bg:#4a2223; --c-cor-fg:#f6aaa6; --c-pow-bg:#1f3555; --c-pow-fg:#9cc2f5; --c-str-bg:#213d24; --c-str-fg:#a5dca0;
+  --opt:#8cabf4; --hl:#f07a72; --p5:#d8dbe0; color-scheme:dark}
+html,body{background:var(--bg);color:var(--fg)}
+[hidden]{display:none!important}
+body{margin:0;font-family:var(--f-body);font-size:15px;line-height:1.6}
+*{box-sizing:border-box}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:14px 0}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:30px;letter-spacing:.04em;margin:0;text-transform:uppercase;line-height:1}
+.brand h1 span{display:inline-block;width:12px;height:22px;border-radius:2px;margin-right:3px;vertical-align:-2px}
+.status{font-size:12px;color:var(--muted)}
+.who{display:flex;gap:8px;align-items:center}
+.who select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:15px;font-weight:700;color:var(--fg);max-width:60vw}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;font-size:15px}
+nav.tabs{display:flex;gap:4px;margin-top:12px}
+nav.tabs button{flex:1;border:0;background:none;color:var(--muted);font:600 17px var(--f-display);letter-spacing:.06em;padding:10px 4px 9px;border-bottom:3px solid transparent;cursor:pointer}
+nav.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:500;font-size:14px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:700}
+.btn.ghost{background:none;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--fg)}
+.btn.danger{color:var(--danger)}
+.btn.small{padding:4px 10px;font-size:13px}
+section.view{display:flex;flex-direction:column;gap:18px;padding-top:20px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);letter-spacing:.04em}
+label.f input,label.f select,label.f textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:15px;color:var(--fg)}
+.grow{flex:1;min-width:0}
+.banner{background:var(--accent-soft);border-radius:8px;padding:10px 14px;font-size:13px}
+
+.daypick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.daypick button{border:2px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.daypick button .t{font:700 24px/1 var(--f-display);letter-spacing:.03em}
+.daypick button .s{font-size:12px;color:var(--muted);line-height:1.4}
+.daypick button[aria-pressed="true"]{border-color:var(--day);background:var(--day);color:var(--day-fg)}
+.daypick button[aria-pressed="true"] .s{color:var(--day-fg);opacity:.85}
+.daypick .next{font:600 11px var(--f-body);letter-spacing:.06em;opacity:.8}
+.meta{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.meta b{color:var(--fg);font-weight:700}
+.cond{display:flex;gap:4px}
+.cond button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:14px}
+.cond button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.f-bw input{width:96px}
+
+.blk{background:var(--surface);border:1px solid var(--line);border-radius:10px;display:grid;grid-template-columns:40px 1fr}
+.blk-n{font:700 24px var(--f-display);color:var(--muted);display:flex;align-items:flex-start;justify-content:center;padding-top:12px;border-right:1px solid var(--line)}
+.blk-body{min-width:0;padding:12px 14px;display:flex;flex-direction:column;gap:14px}
+.pill{align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.06em;border-radius:999px;padding:2px 10px}
+.pill.cor{background:var(--c-cor-bg);color:var(--c-cor-fg)}
+.pill.pow{background:var(--c-pow-bg);color:var(--c-pow-fg)}
+.pill.str{background:var(--c-str-bg);color:var(--c-str-fg)}
+.ln{display:flex;flex-direction:column;gap:6px}
+.ln + .ln{border-top:1px dashed var(--line);padding-top:12px}
+.ln-head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.ln-name{font-weight:700;font-size:16px}
+.ln.opt .ln-name{color:var(--opt)}
+.ln.hl .ln-name{color:var(--hl)}
+.tag{font-size:11px;border:1px solid currentColor;border-radius:4px;padding:0 5px;color:var(--muted);font-weight:500}
+.ln.opt .tag.o{color:var(--opt)}
+.rx{font-family:var(--f-display);font-size:16px;font-weight:600;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.rx .cue{font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--muted);margin-left:6px}
+.goal{font-size:12px;color:var(--ok)}
+.goal b{font:700 15px var(--f-display)}
+.prev{font-size:12px;color:var(--muted)}
+.prev b{font-family:var(--f-display);font-size:14px;color:var(--fg);font-weight:600;letter-spacing:.02em}
+.cor-line{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.chk{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700}
+.chk input{width:22px;height:22px;accent-color:var(--accent)}
+.sets{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.sets th{font-size:11px;color:var(--muted);font-weight:500;text-align:left;padding:2px 4px;letter-spacing:.06em}
+.sets td{padding:3px 4px;vertical-align:middle}
+.sets td.n{font-family:var(--f-display);font-size:16px;color:var(--muted);width:26px}
+.sets input{width:100%;max-width:84px;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:6px 8px;font-family:var(--f-display);font-size:18px;font-weight:600;text-align:right}
+.rpe-pick{display:flex;flex-direction:column;gap:6px}
+.rpe-pick .k{font-size:12px;color:var(--muted);letter-spacing:.04em}
+.rpe-row{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.rpe-row button{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 0;cursor:pointer;font:700 18px var(--f-display);font-variant-numeric:tabular-nums}
+.rpe-row button:hover{border-color:var(--muted)}
+.rpe-row button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.rpe-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.sets input::placeholder{color:var(--muted);opacity:.6;font-weight:500}
+.sets .e1{font-family:var(--f-display);font-size:16px;color:var(--muted);white-space:nowrap}
+.plates{display:flex;gap:2px;align-items:center;min-height:22px}
+.pl{display:inline-block;border-radius:2px;width:7px}
+.x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:4px 6px}
+.x:hover{color:var(--danger)}
+.memo{border-left:4px solid var(--day);padding:6px 12px;font-size:14px}
+.memo .k{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.summary{display:flex;gap:24px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
+.stat .k{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.stat .v{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:15px;font-weight:500;color:var(--muted);margin-left:2px}
+.savebar{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;align-items:center}
+.hist{display:flex;flex-direction:column}
+.h-item{display:grid;grid-template-columns:72px 1fr auto;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start}
+.h-date{font-family:var(--f-display);line-height:1.1}
+.h-date .d{font-size:26px;font-weight:700}
+.h-date .m{font-size:13px;color:var(--muted);letter-spacing:.06em}
+.h-body{min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px}
+.h-body .hd{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:2px}
+.dtag{background:var(--day);color:var(--day-fg);font:700 13px var(--f-display);letter-spacing:.04em;border-radius:4px;padding:0 6px}
+.h-body .line{display:flex;gap:8px;flex-wrap:wrap}
+.h-body .nm{font-weight:700}
+.h-body .best{font-family:var(--f-display);font-size:15px;color:var(--muted)}
+.h-body .note{color:var(--muted);font-size:13px}
+.h-side{text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.h-side .vol{font-family:var(--f-display);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.h-side .acts{display:flex;gap:4px}
+.empty{color:var(--muted);padding:24px 0;font-size:14px}
+.export{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.export textarea{width:100%;min-height:120px;font:12px ui-monospace,monospace;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 8px 6px;overflow-x:auto}
+.chartbox h3{margin:0 8px 6px;font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+.chartbox svg{display:block;width:100%;min-width:320px;height:auto}
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:16px}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table.team{border-collapse:collapse;width:100%;min-width:620px;font-variant-numeric:tabular-nums;font-size:14px}
+table.team th{font-size:11px;font-weight:500;color:var(--muted);text-align:right;padding:10px 10px 6px;letter-spacing:.04em;white-space:nowrap;border-bottom:1px solid var(--line)}
+table.team th:first-child,table.team td:first-child{text-align:left}
+table.team td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;font-family:var(--f-display);font-size:16px}
+table.team td.nm{font-family:var(--f-body);font-weight:700;font-size:14px}
+table.team td.b{font-weight:700}
+table.team tbody tr{cursor:pointer}
+table.team tbody tr:hover{background:var(--bg)}
+table.team tbody tr.on{background:var(--accent-soft)}
+table.team tbody tr:last-child td{border-bottom:0}
+.detail{display:flex;flex-direction:column;gap:14px;border-top:3px solid var(--day);padding-top:14px}
+.dname{margin:0;font-size:22px}
+.ed-days{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ed-days button[data-act="day"]{border:2px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 14px;font:700 18px var(--f-display);cursor:pointer}
+.ed-days button[aria-pressed="true"]{background:var(--day);border-color:var(--day);color:var(--day-fg)}
+.ed-bh{display:flex;gap:6px;align-items:center}
+.ed-bh select,.ed-r1 select{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 6px;font-size:13px;color:var(--fg)}
+.ed-ln{display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:1px dashed var(--line)}
+.ed-r1{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ed-name{flex:1;min-width:140px;border:0;border-bottom:1px solid var(--line);background:none;font-weight:700;font-size:16px;padding:4px 2px;color:var(--fg)}
+.ed-r2{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
+.ed-r2 label.f input{padding:5px 8px;font-size:14px;width:96px}
+.ed-r2 label.f.grow input{width:100%}
+.ed-r2 label.f.grow{min-width:140px}
+.x:disabled{opacity:.3;cursor:default}
+.banner.warn{background:color-mix(in oklab,var(--danger) 14%,var(--surface));color:var(--fg)}
+.ed-save{align-items:end;border-top:1px solid var(--line);padding-top:14px}
+.ed-hist h3{font-size:13px;color:var(--muted);font-weight:500;margin:0 0 6px;letter-spacing:.04em}
+.ed-hrow{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.ed-hrow .d{font-family:var(--f-display);color:var(--muted);font-variant-numeric:tabular-nums}
+textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:15px;color:var(--fg);font-family:inherit}
+footer.adm .ver{margin-top:4px;opacity:.7}
+footer.adm{padding-block:16px 32px;font-size:12px;color:var(--muted);text-align:center}
+footer.adm input{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:14px;color:var(--fg);width:160px}
+.lnk{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12px;padding:4px}
+h2.sec{margin:8px 0 0;font-size:15px;letter-spacing:.04em;border-top:1px solid var(--line);padding-top:16px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:8px;font-size:14px;z-index:20}
+@media (max-width:480px){.sets .plates-col{display:none}.h-item{grid-template-columns:56px 1fr}.h-side{grid-column:2;flex-direction:row;justify-content:space-between;align-items:center;width:100%}.blk{grid-template-columns:30px 1fr}.blk-n{font-size:20px}.blk-body{padding:12px 10px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap" style="padding-bottom:0">
+  <div class="brand">
+    <h1><span style="background:var(--p25)"></span><span style="background:var(--p20)"></span><span style="background:var(--p15)"></span><span style="background:var(--p10)"></span> Plate Log</h1>
+    <div class="who"><label for="player" class="status">選手</label><select id="player" aria-label="選手"><option value="">読み込み中…</option></select></div>
+  </div>
+  <div class="status" id="status" style="margin-top:4px">読み込み中…</div>
+  <div hidden>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-record" data-v="record" aria-selected="true">記録</button>
+    <button role="tab" id="tab-history" data-v="history" aria-selected="false">履歴</button>
+    <button role="tab" id="tab-progress" data-v="progress" aria-selected="false">推移</button>
+    <button role="tab" id="tab-team" data-v="team" aria-selected="false" hidden>チーム</button>
+    <button role="tab" id="tab-menu" data-v="menu" aria-selected="false" hidden>メニュー</button>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <section class="view" id="v-record"></section>
+  <section class="view" id="v-history" hidden></section>
+  <section class="view" id="v-progress" hidden></section>
+  <section class="view" id="v-team" hidden></section>
+  <section class="view" id="v-menu" hidden></section>
+</main>
+<footer class="wrap adm"><span id="adm-area"><button class="lnk" data-act="adm-open">管理者ログイン</button></span><div class="ver">Plate Log v2026.11.13 app</div></footer>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+/* ---------- program (from team sheet) ----------
+   line: n=name, w=load prescription, r=reps text, s=sets, cue, tag ("W-up"|"Extra"),
+         opt=blue text (optional), hl=red text, base=1RM reference lift for % loads */
+let PHASE={phase:"準",goal:"基礎筋力"},PV="default";
+const COR=[{n:"BBニーアップ",r:"左右各10",s:1},{n:"BB レッグツイスト",r:"左右各10",s:1},{n:"BB Vシット",r:"10往復",s:1}];
+let PROGRAM={
+ "1":{label:"Day 1",sub:"下半身プッシュ / 上半身水平プッシュ・垂直プル",memo:["下半身プッシュ","上半身水平プッシュ垂直プル"],blocks:[
+  {cat:"cor",lines:COR},
+  {cat:"pow",lines:[{n:"ハイプル",r:"3",s:4}]},
+  {cat:"str",lines:[{n:"SQ",w:"80~85%",r:"5",s:5},{n:"BOXジャンプ",r:"3",s:3,hl:1}]},
+  {cat:"str",lines:[{n:"BP",w:"80~85%",r:"5",s:3},{n:"BP",w:"70~75%",r:"8",s:3,tag:"Extra",opt:1,cue:"Extra set"}]},
+  {cat:"str",lines:[{n:"懸垂",w:"自重",r:"5",s:1,tag:"W-up",cue:"(逆手でもOK)強く引け!"},{n:"懸垂",w:"重い",r:"5",s:4,cue:"(逆手でもOK)強く引け!"}]},
+  {cat:"str",lines:[{n:"フロントランジ(バーベル)",r:"左右5回",s:3,opt:1},{n:"サイドランジ(ダンベル)",r:"左右5回",s:3,opt:1}]},
+  {cat:"str",lines:[{n:"アームカール",r:"10",s:5,opt:1}]}]},
+ "2":{label:"Day 2",sub:"下半身プル / 上半身水平プル・垂直プッシュ",memo:["下半身プル","上半身水平プル垂直プッシュ"],blocks:[
+  {cat:"cor",lines:COR},
+  {cat:"pow",lines:[{n:"スクワットジャンプ",w:"20~40kg",r:"3",s:4,cue:"全力で!"}]},
+  {cat:"str",lines:[{n:"ミッドサイプル",w:"85~90%",r:"3",s:3,cue:"太もも〜",hl:1},{n:"デッドリフト",w:"85~90%",r:"3",s:4,cue:"フロア〜"}]},
+  {cat:"str",lines:[{n:"ダンベルプッシュジャーク(片手)",r:"3",s:4,hl:1},{n:"ダンベルショルダープレス(座位)",w:"80~85%",r:"5",s:4}]},
+  {cat:"str",lines:[{n:"インクラインDBロウ",w:"自重",r:"5",s:1,tag:"W-up"},{n:"インクラインDBロウ",w:"重い",r:"5",s:4}]},
+  {cat:"str",lines:[{n:"シングルレッグRDL",w:"DL20~40%",r:"5",s:4,base:"デッドリフト"}]},
+  {cat:"str",lines:[{n:"サイドレイズ",r:"10",s:5,opt:1}]}]}
+};
+const CATS={cor:"コレクティブ",pow:"パワー",str:"ストレングス"};
+const dayKeys=()=>Object.keys(PROGRAM).sort((a,b)=>a-b);
+const nextDayAfter=d=>{const k=dayKeys(),i=k.indexOf(d);return i<0?k[0]:k[(i+1)%k.length]};
+
+const BAR=20, PLATES=[[25,"--p25",30],[20,"--p20",28],[15,"--p15",25],[10,"--p10",22],[5,"--p5",16],[2.5,"--psm",13],[1.25,"--psm",10]];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const todayStr=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const num=v=>{const n=parseFloat(v);return isFinite(n)?n:0};
+const fmt=n=>(Math.round(n*10)/10).toLocaleString("ja-JP");
+const e1rm=(w,r)=>(!w||!r||r>12)?0:(r===1?w:w*(1+r/30));
+const workSets=e=>(e.tag==="W-up"||!e.sets)?[]:e.sets;
+const vol=s=>s.exercises.reduce((a,e)=>a+workSets(e).reduce((b,x)=>b+num(x.w)*num(x.r),0),0);
+const nsets=s=>s.exercises.reduce((a,e)=>a+(e.sets||[]).filter(x=>num(x.r)>0).length,0);
+const lineKey=(n,tag)=>n+"|"+(tag||"");
+const repNum=t=>{const m=String(t||"").match(/\d+/);return m?+m[0]:""};
+const round25=x=>Math.round(x/2.5)*2.5;
+
+/* ---------- storage: Google Sheets via Apps Script ---------- */
+let sessions=[], usingSample=false, store=null, player="", roster=[];
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+/* サーバー呼び出し:Apps Scriptの画面内なら google.script.run、アプリ(GitHub Pages)なら fetch */
+const RUN=(typeof google!=="undefined"&&google.script&&google.script.run)?google.script.run:null;
+const API_URL=(window.PLATE_API||"").trim();
+let teamCode=lsGet("plate.team","")||"";
+function gas(fn,...args){
+  const req={fn,args,team:teamCode};
+  if(RUN)return new Promise((res,rej)=>RUN.withSuccessHandler(res).withFailureHandler(e=>rej(e)).api(req));
+  if(!API_URL)return Promise.reject(new Error("サーバーURLが設定されていません(config.js)"));
+  return fetch(API_URL,{method:"POST",body:JSON.stringify(req)})
+    .then(r=>{if(!r.ok)throw new Error("サーバーに接続できませんでした("+r.status+")");return r.json()})
+    .then(j=>{if(!j.ok)throw new Error(j.error);return j.data},e=>{throw /TEAM_CODE/.test(String(e&&e.message))?e:new Error(String(e&&e.message||e).includes("Failed to fetch")||String(e).includes("Load failed")?"通信できませんでした。電波状況を確認してください":errMsg(e))});
+}
+const errMsg=e=>{const m=String(e&&e.message||e||"").replace(/^Error:\s*/,"");return m==="TEAM_CODE"?"チームパスコードが違います":m};
+const isTeamErr=e=>/TEAM_CODE/.test(String(e&&e.message||e||""));
+function setStatus(t){$("#status").textContent=t}
+async function loadHistory(){
+  if(!player){sessions=[];onData();return}
+  setStatus("記録を読み込み中…");
+  try{sessions=await gas("getHistory",player);setStatus(`${player} の記録 ${sessions.length}件 · チームのシートに保存`)}
+  catch(e){sessions=[];setStatus("読み込めませんでした:"+errMsg(e))}
+  onData();
+}
+store={
+  async save(id,doc){await gas("saveSession",player,id,doc);await loadHistory()},
+  async del(id){await gas("deleteSession",player,id);await loadHistory()}
+};
+
+const data=()=>sessions;
+const sorted=()=>[...data()].sort((a,b)=>b.date.localeCompare(a.date)||(b.updatedAt||0)-(a.updatedAt||0));
+
+/* ---------- 1RM reference & prescription ---------- */
+function parsePct(w){const m=String(w||"").match(/(\d+)\s*[~〜]\s*(\d+)\s*%/);return m?[+m[1],+m[2]]:null}
+function bestE1(name){let b=0;sessions.forEach(s=>s.exercises.forEach(e=>{if(e.name!==name||!e.sets)return;workSets(e).forEach(x=>{b=Math.max(b,e1rm(num(x.w),num(x.r)))})}));return b}
+function targetKg(l){const p=parsePct(l.w);if(!p)return null;const ref=l.base||l.n,b=bestE1(ref);if(!b)return{ref,b:0};return{ref,b,lo:round25(b*p[0]/100),hi:round25(b*p[1]/100)}}
+
+/* ---------- draft ---------- */
+function lastDay(){const s=sessions.length?[...sessions].sort((a,b)=>b.date.localeCompare(a.date))[0]:null;return s?.day||null}
+function suggestDay(){const l=lastDay();return l?nextDayAfter(l):dayKeys()[0]}
+function nextWeek(day){const ws=sessions.filter(s=>s.day===day).map(s=>num(s.week));return ws.length?Math.max(...ws)+1:1}
+function buildDraft(day){
+  const P=PROGRAM[day];
+  return{id:null,v:2,pv:PV,day,date:todayStr(),week:nextWeek(day),bw:"",cond:"",note:"",rpe:"",
+    blocks:P.blocks.map(b=>({cat:b.cat,lines:b.lines.map(l=>b.cat==="cor"?{done:false}:{sets:Array.from({length:l.s},()=>({w:"",r:""}))})}))};
+}
+let draft=lsGet("plate.draft3",null);
+if(!draft||!PROGRAM[draft.day]||draft.pv!==PV)draft=buildDraft(suggestDay());
+const saveDraft=()=>lsSet("plate.draft3",draft);
+const touched=()=>draft.bw||draft.cond||draft.note||draft.rpe||draft.blocks.some(b=>b.lines.some(l=>l.done||(l.sets||[]).some(s=>s.w!==""||s.r!=="")));
+
+function prevFor(day,name,tag){
+  for(const s of [...sessions].sort((a,b)=>b.date.localeCompare(a.date))){ if(draft.id&&s.id===draft.id)continue; if(s.date>draft.date)continue;
+    const e=s.exercises.find(e=>e.name===name&&(e.tag||"")===(tag||"")&&e.sets); if(e)return{date:s.date,sets:e.sets}; }
+  return null;
+}
+function platesHTML(w){
+  w=num(w); if(w<BAR)return"";
+  let side=(w-BAR)/2,out=[];
+  for(const[p,c,h]of PLATES){while(side>=p-1e-9){out.push(`<i class="pl" style="height:${h}px;background:var(${c});${c==="--p5"?"outline:1px solid var(--line);":""}" title="${p}kg"></i>`);side-=p}}
+  if(side>1e-6)return"";
+  return out.length?`<span class="plates">${out.join("")}</span>`:`<span class="prev">バーのみ</span>`;
+}
+
+/* ---------- record view ---------- */
+let switchTo=null;
+function renderRecord(){
+  const v=$("#v-record"),P=PROGRAM[draft.day],editing=!!draft.id,sug=suggestDay();
+  if(!player){v.innerHTML=`<div class="gate">画面上部の「選手」から自分の名前を選んでください。${isCoach?"<br><span class=\"prev\">コーチは「チーム」タブで全員の記録を見られます。</span>":""}${roster.length?"":"<br><span class=\"prev\">名簿が空です。コーチがシートの「選手」タブに名前を入れると選べるようになります。</span>"}</div>`;return}
+  v.innerHTML=`
+    ${usingSample?`<div class="banner">まだ記録がありません。履歴と推移には<b>サンプルデータ</b>を表示しています。最初のセッションを保存すると置き換わります。</div>`:""}
+    <div class="daypick" role="group" aria-label="メニュー">
+      ${dayKeys().map(d=>`<button data-day="${d}" aria-pressed="${draft.day===d}" ${editing&&draft.day!==d?"disabled":""}>
+        <span class="t">${switchTo===d?"入力を破棄して切替":PROGRAM[d].label}</span><span class="s">${PROGRAM[d].sub}</span>
+        ${!editing&&d===sug&&sessions.length?`<span class="next">次はこちら</span>`:""}</button>`).join("")}
+    </div>
+    <div class="meta"><span>Week <b>${esc(draft.week)}</b></span><span>フェーズ <b>${PHASE.phase}</b></span><span>目的 <b>${PHASE.goal}</b></span></div>
+    <div class="row">
+      <label class="f">日付<input type="date" id="d-date" value="${esc(draft.date)}"></label>
+      <label class="f">Week<input type="number" id="d-week" min="1" step="1" value="${esc(draft.week)}" style="width:72px"></label>
+      <label class="f f-bw">体重 kg<input type="number" id="d-bw" inputmode="decimal" step="0.1" min="0" value="${esc(draft.bw)}"></label>
+      <div class="f" style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)">体調
+        <div class="cond" role="group" aria-label="体調">${["良い","普通","悪い"].map(c=>`<button data-cond="${c}" aria-pressed="${draft.cond===c}">${c}</button>`).join("")}</div></div>
+    </div>
+    ${P.blocks.map((b,bi)=>blockHTML(b,bi)).join("")}
+    <div class="memo"><div class="k">メモ</div>${P.memo.map(esc).join("<br>")}</div>
+    <label class="f">コメント<input type="text" id="d-note" placeholder="体調・フォームの気づきなど" value="${esc(draft.note)}"></label>
+    <div class="rpe-pick"><div class="k">セッションRPE(きつさ)</div>
+      <div class="rpe-row" role="group" aria-label="セッションRPE">${Array.from({length:10},(_,i)=>i+1).map(n=>`<button data-rpe="${n}" aria-pressed="${num(draft.rpe)===n}" style="--h:${n}">${n}</button>`).join("")}</div>
+      <div class="rpe-ends"><span>1 とても楽</span><span>10 限界</span></div></div>
+    <div class="summary" id="summary"></div>
+    <div class="savebar">
+      ${editing?`<span class="prev">${esc(draft.date)} の記録を編集中</span>`:""}
+      <button class="btn ghost" id="d-reset">${editing?"編集をやめる":"入力をクリア"}</button>
+      <button class="btn primary" id="d-save">${editing?"変更を保存":"セッションを保存"}</button>
+    </div>`;
+  updateSummary();
+}
+function blockHTML(b,bi){
+  const lines=b.lines.map((l,li)=>{
+    const st=draft.blocks[bi].lines[li];
+    if(b.cat==="cor")return `<div class="cor-line"><label class="chk"><input type="checkbox" id="c-${bi}-${li}" data-bi="${bi}" data-li="${li}" ${st.done?"checked":""}>${esc(l.n)}</label><span class="rx">${esc(l.r)} × ${l.s}</span></div>`;
+    const p=prevFor(draft.day,l.n,l.tag),t=targetKg(l);
+    return `<div class="ln ${l.opt?"opt":""} ${l.hl?"hl":""}" data-bi="${bi}" data-li="${li}">
+      <div class="ln-head"><span class="ln-name">${esc(l.n)}</span>${l.tag?`<span class="tag">${l.tag}</span>`:""}${l.opt?`<span class="tag o">任意</span>`:""}</div>
+      <div class="rx">${l.w?esc(l.w)+" · ":""}${esc(l.r)}${/^\d+$/.test(l.r)?"回":""} × ${l.s}セット${l.cue&&l.cue!=="Extra set"?`<span class="cue">${esc(l.cue)}</span>`:""}</div>
+      ${t?(t.b?`<div class="goal">目安 <b>${fmt(t.lo)}–${fmt(t.hi)}kg</b>(${esc(t.ref)} 推定1RM ${fmt(t.b)}kg)</div>`:`<div class="prev">${esc(t.ref)}の記録が入ると目安重量を表示します</div>`):""}
+      ${p?`<div class="prev">前回 ${p.date.slice(5).replace("-","/")}:<b>${p.sets.filter(s=>num(s.r)).map(s=>`${fmt(num(s.w))}×${num(s.r)}`).join(" / ")}</b></div>`:""}
+      <table class="sets"><thead><tr><th>#</th><th>重量 kg</th><th>回数</th><th>推定1RM</th><th class="plates-col">片側</th><th></th></tr></thead><tbody>
+      ${st.sets.map((s,j)=>`<tr data-j="${j}"><td class="n">${j+1}</td>
+        <td><input id="w-${bi}-${li}-${j}" data-f="w" inputmode="decimal" type="number" step="0.5" min="0" placeholder="${t&&t.b?fmt(t.lo):(l.w==="自重"?"自重":"")}" value="${esc(s.w)}" aria-label="重量"></td>
+        <td><input id="r-${bi}-${li}-${j}" data-f="r" inputmode="numeric" type="number" step="1" min="0" placeholder="${repNum(l.r)}" value="${esc(s.r)}" aria-label="回数"></td>
+        <td class="e1" data-e1>${e1Cell(s,l)}</td><td class="plates-col" data-pl>${platesHTML(s.w)}</td>
+        <td><button class="x" data-act="del-set" aria-label="セットを削除">×</button></td></tr>`).join("")}
+      </tbody></table>
+      <div class="row" style="gap:8px"><button class="btn small" data-act="add-set">+ セット</button>${p?`<button class="btn small ghost" data-act="copy-prev">前回と同じ内容を入れる</button>`:""}</div>
+    </div>`}).join("");
+  return `<div class="blk"><div class="blk-n">${bi+1}</div><div class="blk-body"><span class="pill ${b.cat}">${CATS[b.cat]}</span>${lines}</div></div>`;
+}
+const e1Cell=(s,l)=>{if(l.tag==="W-up"||s.w==="")return"—";const v=e1rm(num(s.w),num(s.r)||num(repNum(l.r)));return v?fmt(v):"—"};
+function draftToDoc(){
+  const P=PROGRAM[draft.day],ex=[];
+  P.blocks.forEach((b,bi)=>b.lines.forEach((l,li)=>{
+    const st=draft.blocks[bi].lines[li];
+    if(b.cat==="cor"){ex.push({name:l.n,cat:"cor",done:!!st.done});return}
+    const sets=st.sets.filter(s=>s.w!==""||s.r!=="").map(s=>({w:num(s.w),r:Math.round(s.r!==""?num(s.r):num(repNum(l.r)))})).filter(s=>s.r>0);
+    if(sets.length)ex.push({name:l.n,cat:b.cat,tag:l.tag||"",block:bi+1,sets});
+  }));
+  return{v:2,day:draft.day,week:Math.max(1,Math.round(num(draft.week))||1),date:draft.date||todayStr(),bw:num(draft.bw)||null,cond:draft.cond||"",note:(draft.note||"").trim(),rpe:num(draft.rpe)||null,exercises:ex,updatedAt:Date.now()};
+}
+function updateSummary(){
+  const d=draftToDoc(),cor=d.exercises.filter(e=>e.cat==="cor");
+  $("#summary").innerHTML=`<div class="stat"><div class="k">総挙上量(W-up除く)</div><div class="v">${fmt(vol(d))}<small>kg</small></div></div>
+    <div class="stat"><div class="k">実施セット</div><div class="v">${nsets(d)}</div></div>
+    <div class="stat"><div class="k">セッションRPE</div><div class="v">${d.rpe??"—"}</div></div>
+    <div class="stat"><div class="k">コレクティブ</div><div class="v">${cor.filter(e=>e.done).length}<small>/ ${cor.length}</small></div></div>`;
+}
+
+const rec=$("#v-record");
+rec.addEventListener("input",ev=>{
+  const t=ev.target;
+  if(t.id==="d-date"){draft.date=t.value;saveDraft();return}
+  if(t.id==="d-note"){draft.note=t.value;saveDraft();return}
+  if(t.id==="d-bw"){draft.bw=t.value;saveDraft();return}
+  if(t.id==="d-week"){draft.week=t.value;saveDraft();return}
+  if(t.type==="checkbox"){draft.blocks[+t.dataset.bi].lines[+t.dataset.li].done=t.checked;saveDraft();updateSummary();return}
+  const ln=t.closest(".ln");if(!ln)return;
+  const bi=+ln.dataset.bi,li=+ln.dataset.li,l=PROGRAM[draft.day].blocks[bi].lines[li];
+  const tr=t.closest("tr"),j=+tr.dataset.j,s=draft.blocks[bi].lines[li].sets[j];
+  s[t.dataset.f]=t.value;
+  tr.querySelector("[data-e1]").textContent=e1Cell(s,l);tr.querySelector("[data-pl]").innerHTML=platesHTML(s.w);
+  saveDraft();updateSummary();
+});
+rec.addEventListener("change",ev=>{if(ev.target.id==="d-date")renderRecord()});
+rec.addEventListener("click",async ev=>{
+  const b=ev.target.closest("button");if(!b)return;
+  if(b.dataset.day){const d=b.dataset.day;if(d===draft.day){switchTo=null;return}
+    if(touched()&&switchTo!==d){switchTo=d;renderRecord();return}
+    switchTo=null;draft=buildDraft(d);saveDraft();renderRecord();return}
+  if(b.dataset.rpe){draft.rpe=num(draft.rpe)===+b.dataset.rpe?"":+b.dataset.rpe;saveDraft();rec.querySelectorAll("[data-rpe]").forEach(x=>x.setAttribute("aria-pressed",num(draft.rpe)===+x.dataset.rpe));updateSummary();return}
+  if(b.dataset.cond){draft.cond=draft.cond===b.dataset.cond?"":b.dataset.cond;saveDraft();renderRecord();return}
+  if(b.id==="d-reset"){draft=buildDraft(draft.id?draft.day:draft.day);saveDraft();renderRecord();return}
+  if(b.id==="d-save"){await saveSession();return}
+  const ln=b.closest(".ln");if(!ln)return;
+  const bi=+ln.dataset.bi,li=+ln.dataset.li,L=draft.blocks[bi].lines[li],l=PROGRAM[draft.day].blocks[bi].lines[li];
+  const a=b.dataset.act;
+  if(a==="add-set"){const x=L.sets[L.sets.length-1]||{w:"",r:""};L.sets.push({w:x.w,r:x.r})}
+  if(a==="del-set"){const j=+b.closest("tr").dataset.j;L.sets.splice(j,1);if(!L.sets.length)L.sets.push({w:"",r:""})}
+  if(a==="copy-prev"){const p=prevFor(draft.day,l.n,l.tag);if(p)L.sets=p.sets.map(s=>({w:s.w,r:s.r}))}
+  saveDraft();renderRecord();
+});
+async function saveSession(){
+  const doc=draftToDoc();
+  if(!doc.exercises.some(e=>e.sets)&&!doc.exercises.some(e=>e.done)){toast("実施した内容を入力してください");return}
+  const id=draft.id||uid();
+  const btn=$("#d-save");btn.disabled=true;btn.textContent="保存中…";
+  try{await store.save(id,doc)}
+  catch(e){btn.disabled=false;btn.textContent="セッションを保存";toast("保存できませんでした:"+errMsg(e));return}
+  draft=buildDraft(nextDayAfter(doc.day));saveDraft();toast(`Day ${doc.day} · Week ${doc.week} をシートに保存しました`);renderAll()
+}
+function editSession(s){
+  if(!PROGRAM[s.day]){toast("現在のメニューにないDayの記録のため編集できません");return}
+  const known=new Set(PROGRAM[s.day].blocks.flatMap(b=>b.lines.map(l=>lineKey(l.n,b.cat==="cor"?"":l.tag))));
+  if(s.exercises.some(e=>!known.has(lineKey(e.name,e.sets?e.tag:"")))){toast("メニュー変更前の記録のため編集できません(削除して入力し直してください)");return}
+  const d=buildDraft(s.day);d.id=s.id;d.date=s.date;d.week=s.week;d.bw=s.bw??"";d.cond=s.cond||"";d.note=s.note||"";d.rpe=s.rpe??"";
+  PROGRAM[s.day].blocks.forEach((b,bi)=>b.lines.forEach((l,li)=>{
+    const e=s.exercises.find(e=>e.name===l.n&&(e.tag||"")===(l.tag||""));if(!e)return;
+    if(b.cat==="cor")d.blocks[bi].lines[li].done=!!e.done;
+    else{const v=e.sets.map(x=>({w:x.w,r:x.r}));while(v.length<l.s)v.push({w:"",r:""});d.blocks[bi].lines[li].sets=v}
+  }));
+  draft=d;switchTo=null;saveDraft();show("record");renderRecord();scrollTo(0,0);
+}
+
+/* ---------- history view ---------- */
+let confirmDel=null;
+function renderHistory(){
+  const v=$("#v-history"),list=sorted();
+  if(!list.length){v.innerHTML=`<p class="empty">記録はまだありません。「記録」タブで最初のセッションを保存してください。</p>`;return}
+  v.innerHTML=`${usingSample?`<div class="banner">サンプルデータです。</div>`:""}
+  <div class="statrow">
+    <div class="stat"><div class="k">記録したセッション</div><div class="v">${list.length}<small>回</small></div></div>
+    <div class="stat"><div class="k">${dayKeys().map(k=>"Day "+k).join(" / ")}</div><div class="v">${dayKeys().map(k=>list.filter(s=>s.day===k).length).join("<small>/</small>")}</div></div>
+  </div>
+  <div class="hist">${list.map(s=>{const d=new Date(s.date+"T00:00");
+    const lifts=s.exercises.filter(e=>e.sets&&e.tag!=="W-up");const cor=s.exercises.filter(e=>e.cat==="cor");
+    return `<div class="h-item" data-id="${esc(s.id)}">
+      <div class="h-date"><div class="d">${d.getDate()}</div><div class="m">${d.getFullYear()}.${d.getMonth()+1} ${"日月火水木金土"[d.getDay()]}</div></div>
+      <div class="h-body">
+        <div class="hd">${s.day?`<span class="dtag">DAY ${s.day} · W${s.week??"-"}</span>`:""}${s.bw?`<span class="prev">${fmt(s.bw)}kg</span>`:""}${s.cond?`<span class="prev">体調 ${esc(s.cond)}</span>`:""}${s.rpe?`<span class="prev">RPE ${s.rpe}</span>`:""}${cor.length?`<span class="prev">コレクティブ ${cor.filter(e=>e.done).length}/${cor.length}</span>`:""}</div>
+        ${lifts.map(e=>{const top=e.sets.reduce((m,x)=>x.w>m.w?x:m,e.sets[0]);
+        return `<div class="line"><span class="nm">${esc(e.name)}${e.tag?` <span class="tag">${esc(e.tag)}</span>`:""}</span><span class="best">${e.sets.length}セット · 最高 ${fmt(top.w)}kg×${top.r}</span></div>`}).join("")}
+        ${s.note?`<div class="note">${esc(s.note)}</div>`:""}</div>
+      <div class="h-side"><div class="vol">${fmt(vol(s))}<small class="prev"> kg</small></div>
+        ${usingSample?"":`<div class="acts"><button class="btn small" data-act="edit">編集</button><button class="btn small danger" data-act="del">${confirmDel===s.id?"本当に削除":"削除"}</button></div>`}</div>
+    </div>`}).join("")}</div>`;
+}
+$("#v-history").addEventListener("click",async ev=>{
+  const b=ev.target.closest("button");if(!b)return;
+  const it=b.closest(".h-item");if(!it)return;const id=it.dataset.id;
+  const s=sessions.find(x=>x.id===id);if(!s)return;
+  if(b.dataset.act==="edit"){editSession(s);return}
+  if(b.dataset.act==="del"){
+    if(confirmDel!==id){confirmDel=id;renderHistory();return}
+    confirmDel=null;try{await store.del(id);toast("削除しました")}catch(e){toast("削除できませんでした:"+errMsg(e))}
+  }
+});
+
+/* ---------- progress view (player & coach detail share this) ---------- */
+let progEx=null;
+function liftNames(list){
+  const order=[];Object.values(PROGRAM).forEach(P=>P.blocks.forEach(b=>b.cat!=="cor"&&b.lines.forEach(l=>{if(!order.includes(l.n))order.push(l.n)})));
+  const have=new Set(list.flatMap(s=>s.exercises.filter(e=>e.sets&&e.tag!=="W-up"&&e.sets.some(x=>x.w>0)).map(e=>e.name)));
+  return[...order.filter(n=>have.has(n)),...[...have].filter(n=>!order.includes(n))];
+}
+function e1Series(list,ex){const pts=[];let topW=0,topE=0;
+  list.forEach(s=>{const es=s.exercises.filter(e=>e.name===ex&&e.sets&&e.tag!=="W-up");if(!es.length)return;
+    let best=0;es.forEach(e=>e.sets.forEach(x=>{best=Math.max(best,e1rm(x.w,x.r));topW=Math.max(topW,x.w)}));
+    if(best){pts.push({date:s.date,v:best});topE=Math.max(topE,best)}});
+  return{pts,topW,topE}}
+function topWSeries(list,ex){const pts=[];list.forEach(s=>{let m=0;s.exercises.forEach(e=>{if(e.name===ex&&e.sets&&e.tag!=="W-up")e.sets.forEach(x=>{if(num(x.r)>0)m=Math.max(m,num(x.w))})});if(m>0)pts.push({date:s.date,v:m})});return pts}
+function dailyVol(list){const m={};list.forEach(s=>{const v=vol(s);if(v>0)m[s.date]=(m[s.date]||0)+v});return Object.keys(m).sort().map(d=>({date:d,v:m[d]}))}
+function progressHTML(list,ex,selId){
+  list=[...list].sort((a,b)=>a.date.localeCompare(b.date));
+  if(!list.length)return{ex:null,html:`<p class="empty">記録を保存すると、体重・使用重量・1日の総負荷量の推移がここに表示されます。</p>`};
+  const names=liftNames(list);
+  if(!names.includes(ex))ex=names[0]||null;
+  const bws=list.filter(s=>s.bw).map(s=>({date:s.date,v:s.bw}));
+  const dv=dailyVol(list),lastDv=dv[dv.length-1],avgDv=dv.length?dv.slice(-8).reduce((a,b)=>a+b.v,0)/Math.min(8,dv.length):0;
+  const rpes=list.filter(s=>s.rpe).map(s=>({date:s.date,v:s.rpe}));
+  const bwLast=bws[bws.length-1],bwFirst=bws[0];
+  let lift="";
+  if(ex){const {pts,topW,topE}=e1Series(list,ex),tw=topWSeries(list,ex),last=tw[tw.length-1],first=tw[0];
+    lift=`<h2 class="sec">種目別の重量</h2>
+    <label class="f">種目<select id="${selId}">${names.map(n=>`<option ${n===ex?"selected":""}>${esc(n)}</option>`).join("")}</select></label>
+    <div class="statrow">
+      <div class="stat"><div class="k">最高重量</div><div class="v">${fmt(topW)}<small>kg</small></div></div>
+      <div class="stat"><div class="k">最高 推定1RM</div><div class="v">${fmt(topE)}<small>kg</small></div></div>
+      <div class="stat"><div class="k">使用重量 初回比</div><div class="v" style="color:${last&&first&&tw.length>1?(last.v>=first.v?"var(--ok)":"var(--danger)"):"inherit"}">${last&&first&&tw.length>1?(last.v>=first.v?"+":"")+fmt(last.v-first.v):"—"}<small>kg</small></div></div>
+    </div>
+    <div class="chartbox"><h3>${esc(ex)} 使用重量の推移(その日の最高重量・W-up除く)</h3>${lineChart(tw,"kg")}</div>
+    <div class="chartbox"><h3>${esc(ex)} 推定1RMの推移(Epley式・12回以下)</h3>${lineChart(pts,"kg")}</div>`}
+  return{ex,html:`
+    <div class="statrow">
+      <div class="stat"><div class="k">最新の体重</div><div class="v">${bwLast?fmt(bwLast.v):"—"}<small>kg</small></div></div>
+      <div class="stat"><div class="k">体重 初回比</div><div class="v">${bws.length>1?(bwLast.v>=bwFirst.v?"+":"")+fmt(bwLast.v-bwFirst.v):"—"}<small>kg</small></div></div>
+      <div class="stat"><div class="k">直近の総負荷量</div><div class="v">${lastDv?fmt(lastDv.v):"—"}<small>kg</small></div></div>
+      <div class="stat"><div class="k">総負荷量 直近8回平均</div><div class="v">${avgDv?fmt(avgDv):"—"}<small>kg</small></div></div>
+    </div>
+    <div class="chartbox"><h3>体重の推移</h3>${bws.length?lineChart(bws,"kg"):`<p class="empty" style="padding:12px 8px">記録画面で体重を入力すると表示されます。</p>`}</div>
+    <div class="chartbox"><h3>1日の総負荷量(重量×回数の合計・W-up除く・直近20日)</h3>${dayBarChart(dv)}</div>
+    ${lift}
+    <h2 class="sec">負荷とRPE</h2>
+    <div class="chartbox"><h3>週ごとの総負荷量(直近8週)</h3>${barChart(list)}</div>
+    <div class="chartbox"><h3>セッションRPEの推移</h3>${lineChart(rpes,"",[1,10])}</div>`};
+}
+function dayBarChart(dv){
+  dv=dv.slice(-20);
+  if(!dv.length)return`<p class="empty" style="padding:12px 8px">重量を入力した記録がまだありません。</p>`;
+  const W=640,H=210,L=56,R=12,T=22,B=28,max=Math.max(...dv.map(d=>d.v)),ticks=niceTicks(0,max,3),hi=ticks[ticks.length-1];
+  const bw=(W-L-R)/Math.max(dv.length,6),Y=v=>T+(H-T-B)*(1-v/hi),step=Math.ceil(dv.length/7);
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="1日の総負荷量">
+    ${ticks.map(t=>`<line x1="${L}" x2="${W-R}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)"/><text x="${L-8}" y="${Y(t)+4}" text-anchor="end" font-size="12" fill="var(--muted)" font-family="var(--f-display)">${t>=1000?fmt(t/1000)+"t":fmt(t)}</text>`).join("")}
+    ${dv.map((d,i)=>{const last=i===dv.length-1,x=L+i*bw;return `<rect x="${x+bw*.15}" y="${Y(d.v)}" width="${bw*.7}" height="${Math.max(0,H-B-Y(d.v))}" rx="2" fill="${last?"var(--accent)":"var(--muted)"}" fill-opacity="${last?1:.45}"><title>${d.date} ${fmt(d.v)}kg</title></rect>
+      ${last?`<text x="${Math.min(x+bw/2,W-R-20)}" y="${Y(d.v)-6}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--fg)" font-family="var(--f-display)">${fmt(d.v)}</text>`:""}
+      ${(dv.length-1-i)%step===0?`<text x="${x+bw/2}" y="${H-8}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--f-display)">${d.date.slice(5).replace("-","/")}</text>`:""}`}).join("")}
+  </svg>`;
+}
+let progP="";
+function renderProgress(){
+  const v=$("#v-progress");
+  if(isCoach&&!player){
+    if(!team){v.innerHTML=`<p class="empty">チームの記録を読み込み中…</p>`;if(!teamLoading)loadTeam();return}
+    if(team.error){v.innerHTML=`<p class="empty">読み込めませんでした:${esc(team.error)}</p>`;return}
+    if(!team.roster.includes(progP))progP=team.roster.find(n=>(team.players[n]||[]).length)||team.roster[0]||"";
+    const r=progressHTML(team.players[progP]||[],progEx,"p-ex");progEx=r.ex??progEx;
+    v.innerHTML=`<label class="f">表示する選手<select id="p-player">${team.roster.map(n=>`<option ${n===progP?"selected":""}>${esc(n)}</option>`).join("")}</select></label>${r.html}`;return}
+  const r=progressHTML(data(),progEx,"p-ex");progEx=r.ex;v.innerHTML=r.html;
+}
+$("#v-progress").addEventListener("change",ev=>{if(ev.target.id==="p-ex"){progEx=ev.target.value;renderProgress()}
+  if(ev.target.id==="p-player"){progP=ev.target.value;renderProgress()}});
+
+/* ---------- team view (coach only) ---------- */
+let isCoach=false,team=null,teamEx="SQ",teamSel="",teamDetailEx=null,teamLoading=false;
+async function loadTeam(){
+  teamLoading=true;renderTeam();
+  try{team=await gas("getTeam",adminCode)}catch(e){team={error:errMsg(e)}}
+  teamLoading=false;renderTeam();if(!$("#v-progress").hidden)renderProgress();
+}
+function teamRows(){
+  const today=todayStr(),cut=new Date(today+"T00:00");cut.setDate(cut.getDate()-28);const c4=cut.toISOString().slice(0,10);
+  return team.roster.map(name=>{
+    const list=[...(team.players[name]||[])].sort((a,b)=>a.date.localeCompare(b.date));
+    const recent=list.filter(s=>s.date>=c4),rp=recent.filter(s=>s.rpe).map(s=>s.rpe);
+    const bw=[...list].reverse().find(s=>s.bw)?.bw||null;
+    const {pts,topE}=e1Series(list,teamEx);
+    const last=pts[pts.length-1],first=pts[0];
+    return{name,n:list.length,lastDate:list.length?list[list.length-1].date:"",n4:recent.length,
+      rpe:rp.length?rp.reduce((a,b)=>a+b,0)/rp.length:null,bw,latest:last?.v||0,first:first?.v||0,best:topE,
+      ratio:last&&bw?last.v/bw:null,delta:last&&first&&pts.length>1?last.v-first.v:null};
+  }).sort((a,b)=>(b.latest-a.latest)||(b.n-a.n));
+}
+function renderTeam(){
+  const v=$("#v-team");if(!v)return;
+  if(teamLoading&&!team){v.innerHTML=`<p class="empty">チームの記録を読み込み中…</p>`;return}
+  if(!team){v.innerHTML="";return}
+  if(team.error){v.innerHTML=`<p class="empty">読み込めませんでした:${esc(team.error)}</p><div><button class="btn" data-act="t-reload">再読み込み</button></div>`;return}
+  const all=Object.values(team.players).flat();
+  const lifts=liftNames(all);
+  if(!lifts.includes(teamEx)&&lifts.length)teamEx=lifts[0];
+  const rows=teamRows(),withData=rows.filter(r=>r.latest);
+  const sel=teamSel&&team.players[teamSel]?teamSel:"";
+  let detail="";
+  if(sel){const r=progressHTML(team.players[sel],teamDetailEx??teamEx,"t-dex");teamDetailEx=r.ex;
+    detail=`<div class="detail" id="t-detail"><div class="row" style="justify-content:space-between;align-items:center"><h2 class="dname">${esc(sel)}</h2><button class="btn small ghost" data-act="t-close">閉じる</button></div>${r.html}</div>`}
+  v.innerHTML=`
+    <div class="row" style="justify-content:space-between">
+      <label class="f">比較する種目<select id="t-ex">${lifts.map(n=>`<option ${n===teamEx?"selected":""}>${esc(n)}</option>`).join("")||"<option>—</option>"}</select></label>
+      <button class="btn small" data-act="t-reload">${teamLoading?"更新中…":"最新に更新"}</button>
+    </div>
+    <div class="chartbox"><h3>${esc(teamEx)} 最新の推定1RM(縦線は初回の値)</h3>${hbarChart(withData)}</div>
+    <div class="tbl"><table class="team">
+      <thead><tr><th>選手</th><th>最終記録</th><th>直近4週</th><th>平均RPE</th><th>体重</th><th>${esc(teamEx)} 最新</th><th>最高</th><th>体重比</th><th>初回比</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr data-p="${esc(r.name)}" class="${r.name===sel?"on":""}" tabindex="0">
+        <td class="nm">${esc(r.name)}</td><td>${r.lastDate?r.lastDate.slice(5).replace("-","/"):"—"}</td><td>${r.n4}回</td>
+        <td>${r.rpe?fmt(r.rpe):"—"}</td><td>${r.bw?fmt(r.bw):"—"}</td>
+        <td class="b">${r.latest?fmt(r.latest):"—"}</td><td>${r.best?fmt(r.best):"—"}</td>
+        <td>${r.ratio?r.ratio.toFixed(2):"—"}</td>
+        <td style="color:${r.delta==null?"inherit":r.delta>=0?"var(--ok)":"var(--danger)"}">${r.delta==null?"—":(r.delta>=0?"+":"")+fmt(r.delta)}</td></tr>`).join("")}</tbody>
+    </table></div>
+    <p class="prev">行をタップすると、その選手の推移グラフを表示します。直近4週・平均RPEは過去28日間の値です。</p>
+    ${detail}`;
+}
+function hbarChart(rows){
+  if(!rows.length)return`<p class="empty" style="padding:12px 8px">この種目の記録がまだありません。</p>`;
+  const L=92,R=56,rowH=26,T=8,B=24,W=640,H=T+B+rows.length*rowH;
+  const max=Math.max(...rows.map(r=>Math.max(r.latest,r.first))),ticks=niceTicks(0,max,4),hi=ticks[ticks.length-1];
+  const X=v=>L+(W-L-R)*(v/hi);
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="選手別 推定1RM">
+    ${ticks.map(t=>`<line x1="${X(t)}" x2="${X(t)}" y1="${T}" y2="${H-B}" stroke="var(--line)"/><text x="${X(t)}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--f-display)">${fmt(t)}</text>`).join("")}
+    ${rows.map((r,i)=>{const y=T+i*rowH;return `<g data-p="${esc(r.name)}" style="cursor:pointer">
+      <text x="${L-8}" y="${y+rowH/2+4}" text-anchor="end" font-size="13" fill="var(--fg)" font-family="var(--f-body)">${esc(r.name.length>7?r.name.slice(0,7)+"…":r.name)}</text>
+      <rect x="${L}" y="${y+5}" width="${Math.max(1,X(r.latest)-L)}" height="${rowH-10}" rx="2" fill="${r.name===teamSel?"var(--day)":"var(--accent)"}"/>
+      ${r.first&&r.first!==r.latest?`<line x1="${X(r.first)}" x2="${X(r.first)}" y1="${y+2}" y2="${y+rowH-2}" stroke="var(--fg)" stroke-width="2"/>`:""}
+      <text x="${X(r.latest)+6}" y="${y+rowH/2+5}" font-size="13" font-weight="700" fill="var(--fg)" font-family="var(--f-display)">${fmt(r.latest)}</text></g>`}).join("")}
+  </svg>`;
+}
+function openPlayer(name){teamSel=teamSel===name?"":name;teamDetailEx=null;renderTeam();
+  if(teamSel)setTimeout(()=>{const d=$("#t-detail");if(d&&d.scrollIntoView)d.scrollIntoView({behavior:"smooth",block:"start"})},0)}
+const tv=$("#v-team");
+tv.addEventListener("change",ev=>{if(ev.target.id==="t-ex"){teamEx=ev.target.value;teamDetailEx=null;renderTeam()}
+  if(ev.target.id==="t-dex"){teamDetailEx=ev.target.value;renderTeam()}});
+tv.addEventListener("click",ev=>{const b=ev.target.closest("button");
+  if(b?.dataset.act==="t-reload"){loadTeam();return}
+  if(b?.dataset.act==="t-close"){teamSel="";renderTeam();return}
+  const r=ev.target.closest("[data-p]");if(r)openPlayer(r.dataset.p)});
+tv.addEventListener("keydown",ev=>{if(ev.key==="Enter"){const r=ev.target.closest("tr[data-p]");if(r)openPlayer(r.dataset.p)}});
+function niceTicks(lo,hi,n=4){if(hi-lo<1){lo-=1;hi+=1}const span=hi-lo,raw=span/n,mag=10**Math.floor(Math.log10(raw)),st=[1,2,2.5,5,10].map(x=>x*mag).find(x=>x>=raw);
+  const a=Math.floor(lo/st)*st,b=Math.ceil(hi/st)*st,t=[];for(let x=a;x<=b+1e-9;x+=st)t.push(+x.toFixed(4));return t}
+function lineChart(pts,unit="kg",range=null){
+  if(pts.length<2)return`<p class="empty" style="padding:12px 8px">2回以上記録すると推移が表示されます。</p>`;
+  const W=640,H=240,L=46,R=16,T=22,B=30;
+  const t0=+new Date(pts[0].date),t1=+new Date(pts[pts.length-1].date);
+  const ticks=range?[1,4,7,10]:niceTicks(Math.min(...pts.map(p=>p.v)),Math.max(...pts.map(p=>p.v)));
+  const lo=range?range[0]:ticks[0],hi=range?range[1]:ticks[ticks.length-1];
+  const X=t=>L+(W-L-R)*((t-t0)/((t1-t0)||1)),Y=v=>T+(H-T-B)*(1-(v-lo)/((hi-lo)||1));
+  const xy=pts.map(p=>[X(+new Date(p.date)),Y(p.v)]);
+  const path=xy.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const area=path+` L${xy[xy.length-1][0].toFixed(1)} ${H-B} L${xy[0][0].toFixed(1)} ${H-B} Z`;
+  const lab=d=>d.slice(5).replace("-","/");
+  const xl=[0,Math.floor((pts.length-1)/2),pts.length-1].filter((v,i,a)=>a.indexOf(v)===i);
+  const lp=xy[xy.length-1];
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="推移グラフ">
+    ${ticks.map(t=>`<line x1="${L}" x2="${W-R}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${L-8}" y="${Y(t)+4}" text-anchor="end" font-size="12" fill="var(--muted)" font-family="var(--f-display)">${fmt(t)}</text>`).join("")}
+    <path d="${area}" fill="var(--accent)" fill-opacity=".1"/>
+    <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+    ${xy.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>`).join("")}
+    <circle cx="${lp[0]}" cy="${lp[1]}" r="5" fill="var(--accent)"/>
+    <text x="${Math.min(lp[0],W-R-4)}" y="${lp[1]-10}" text-anchor="end" font-size="14" font-weight="700" fill="var(--fg)" font-family="var(--f-display)">${fmt(pts[pts.length-1].v)}${unit?" "+unit:""}</text>
+    ${xl.map(i=>`<text x="${xy[i][0]}" y="${H-8}" text-anchor="${i===0?"start":i===pts.length-1?"end":"middle"}" font-size="12" fill="var(--muted)" font-family="var(--f-display)">${lab(pts[i].date)}</text>`).join("")}
+  </svg>`;
+}
+function weekStart(ds){const d=new Date(ds+"T00:00");const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return d}
+function barChart(list){
+  const now=weekStart(todayStr()),weeks=[];
+  for(let i=7;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i*7);weeks.push({d,v:0})}
+  list.forEach(s=>{const w=weekStart(s.date);const b=weeks.find(x=>+x.d===+w);if(b)b.v+=vol(s)});
+  const W=640,H=200,L=56,R=12,T=14,B=28,max=Math.max(...weeks.map(w=>w.v));
+  if(!max)return`<p class="empty" style="padding:12px 8px">直近8週の記録がありません。</p>`;
+  const ticks=niceTicks(0,max,3),hi=ticks[ticks.length-1];
+  const bw=(W-L-R)/weeks.length,Y=v=>T+(H-T-B)*(1-v/hi);
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="週ごとの総挙上量">
+    ${ticks.map(t=>`<line x1="${L}" x2="${W-R}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)"/><text x="${L-8}" y="${Y(t)+4}" text-anchor="end" font-size="12" fill="var(--muted)" font-family="var(--f-display)">${t>=1000?fmt(t/1000)+"t":fmt(t)}</text>`).join("")}
+    ${weeks.map((w,i)=>`<rect x="${L+i*bw+bw*.18}" y="${Y(w.v)}" width="${bw*.64}" height="${Math.max(0,H-B-Y(w.v))}" rx="2" fill="${i===weeks.length-1?"var(--accent)":"var(--muted)"}" fill-opacity="${i===weeks.length-1?1:.45}"/>
+      <text x="${L+i*bw+bw/2}" y="${H-8}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--f-display)">${w.d.getMonth()+1}/${w.d.getDate()}</text>`).join("")}
+  </svg>`;
+}
+
+/* ---------- program updates ---------- */
+function applyProgram(p){
+  PROGRAM=p.program;PHASE={phase:p.phase||"",goal:p.goal||""};PV=p.version||"default";
+  if(draft.pv!==PV||!PROGRAM[draft.day]){const was=touched()&&!draft.id;draft=buildDraft(PROGRAM[draft.day]?draft.day:suggestDay());saveDraft();
+    if(was)toast("メニューが更新されたため、入力中の内容をリセットしました")}
+}
+
+/* ---------- menu editor (coach only) ---------- */
+let ed=null,edDay=0,edDirty=false,edHist=null,edDelDay=false,edNote="";
+const TAGS={"":"通常","W-up":"W-up","Extra":"Extra"},DISP={"":"通常","opt":"任意(青)","hl":"強調(赤)"};
+function toEd(){return{phase:PHASE.phase,goal:PHASE.goal,days:dayKeys().map(k=>{const P=PROGRAM[k];return{label:P.label||"",sub:P.sub||"",memo:(P.memo||[]).join("\n"),
+  blocks:P.blocks.map(b=>({cat:b.cat,lines:b.lines.map(l=>({n:l.n||"",w:l.w||"",r:l.r||"",s:l.s||1,cue:l.cue||"",tag:l.tag||"",disp:l.opt?"opt":l.hl?"hl":"",base:l.base||""}))}))}})}}
+function fromEd(){const program={};ed.days.forEach((d,i)=>{program[String(i+1)]={label:d.label.trim()||"Day "+(i+1),sub:d.sub.trim(),memo:d.memo.split("\n").map(x=>x.trim()).filter(Boolean),
+  blocks:d.blocks.filter(b=>b.lines.some(l=>l.n.trim())).map(b=>({cat:b.cat,lines:b.lines.filter(l=>l.n.trim()).map(l=>{const o={n:l.n.trim(),r:String(l.r).trim(),s:Math.max(1,Math.min(20,Math.round(num(l.s))||1))};
+    if(b.cat!=="cor"){if(l.w.trim())o.w=l.w.trim();if(l.cue.trim())o.cue=l.cue.trim();if(l.tag)o.tag=l.tag;if(l.disp==="opt")o.opt=1;if(l.disp==="hl")o.hl=1;if(l.base.trim())o.base=l.base.trim()}
+    return o})}))}});return{phase:ed.phase.trim(),goal:ed.goal.trim(),program}}
+function edProblems(){const out=[];ed.days.forEach((d,i)=>{const seen=new Set();let n=0;
+  d.blocks.forEach(b=>b.lines.forEach(l=>{if(!l.n.trim())return;n++;const k=lineKey(l.n.trim(),b.cat==="cor"?"":l.tag);
+    if(seen.has(k))out.push(`Day ${i+1}:「${l.n.trim()}」${l.tag?"("+l.tag+")":""}が重複しています。種別を変えるか名前を区別してください`);seen.add(k)}));
+  if(!n)out.push(`Day ${i+1}:種目がありません`)});return out}
+function openEditor(){if(!ed||!edDirty){ed=toEd();edDay=Math.min(edDay,ed.days.length-1);edDirty=false}renderEditor();if(!edHist)loadEdHist()}
+async function loadEdHist(){try{edHist=await gas("getProgramHistory",adminCode)}catch(e){edHist={error:errMsg(e)}}if(!$("#v-menu").hidden)renderEditor()}
+const opt=(o,v)=>Object.entries(o).map(([k,t])=>`<option value="${k}" ${k===v?"selected":""}>${t}</option>`).join("");
+function renderEditor(){
+  const v=$("#v-menu"),D=ed.days[edDay],pre=`days.${edDay}`,probs=edProblems();
+  v.innerHTML=`
+    <div class="banner">ここで保存したメニューが、全選手の記録画面に反映されます(選手が画面を再読み込みした時点から)。過去の記録はそのまま残ります。</div>
+    <div class="row">
+      <label class="f">フェーズ<input data-k="phase" value="${esc(ed.phase)}" style="width:120px"></label>
+      <label class="f grow">目的<input data-k="goal" value="${esc(ed.goal)}"></label>
+    </div>
+    <div class="ed-days" role="tablist">${ed.days.map((d,i)=>`<button data-act="day" data-i="${i}" aria-pressed="${i===edDay}">Day ${i+1}</button>`).join("")}
+      <button class="btn small" data-act="add-day">+ Day</button><button class="btn small ghost" data-act="dup-day">このDayを複製</button>
+      ${ed.days.length>1?`<button class="btn small ghost danger" data-act="del-day">${edDelDay?"本当に削除":"このDayを削除"}</button>`:""}</div>
+    <div class="row">
+      <label class="f">表示名<input data-k="${pre}.label" value="${esc(D.label)}" style="width:120px"></label>
+      <label class="f grow">説明(Day選択ボタンに表示)<input data-k="${pre}.sub" value="${esc(D.sub)}"></label>
+    </div>
+    ${D.blocks.map((b,bi)=>`<div class="blk ed-blk"><div class="blk-n">${bi+1}</div><div class="blk-body">
+      <div class="ed-bh"><select data-k="${pre}.blocks.${bi}.cat" aria-label="区分">${opt(CATS,b.cat)}</select>
+        <span class="grow"></span>
+        <button class="x" data-act="b-up" data-bi="${bi}" aria-label="ブロックを上へ" ${bi?"":"disabled"}>↑</button>
+        <button class="x" data-act="b-down" data-bi="${bi}" aria-label="ブロックを下へ" ${bi<D.blocks.length-1?"":"disabled"}>↓</button>
+        <button class="x" data-act="b-del" data-bi="${bi}" aria-label="ブロックを削除">×</button></div>
+      ${b.lines.map((l,li)=>{const k=`${pre}.blocks.${bi}.lines.${li}`,cor=b.cat==="cor";return `<div class="ed-ln">
+        <div class="ed-r1"><input data-k="${k}.n" value="${esc(l.n)}" placeholder="種目名" aria-label="種目名" class="ed-name">
+          ${cor?"":`<select data-k="${k}.tag" aria-label="種別">${opt(TAGS,l.tag)}</select><select data-k="${k}.disp" aria-label="表示">${opt(DISP,l.disp)}</select>`}
+          <button class="x" data-act="l-up" data-bi="${bi}" data-li="${li}" aria-label="上へ" ${li?"":"disabled"}>↑</button>
+          <button class="x" data-act="l-down" data-bi="${bi}" data-li="${li}" aria-label="下へ" ${li<b.lines.length-1?"":"disabled"}>↓</button>
+          <button class="x" data-act="l-del" data-bi="${bi}" data-li="${li}" aria-label="種目を削除">×</button></div>
+        <div class="ed-r2">
+          ${cor?"":`<label class="f">重量<input data-k="${k}.w" value="${esc(l.w)}" placeholder="80~85%"></label>`}
+          <label class="f">回数<input data-k="${k}.r" value="${esc(l.r)}" placeholder="5"></label>
+          <label class="f">セット<input data-k="${k}.s" type="number" min="1" max="20" value="${esc(l.s)}"></label>
+          ${cor?"":`<label class="f grow">指示<input data-k="${k}.cue" value="${esc(l.cue)}" placeholder="全力で!"></label>
+          <label class="f">%の基準種目<input data-k="${k}.base" value="${esc(l.base)}" placeholder="同じ種目"></label>`}
+        </div></div>`}).join("")}
+      <div><button class="btn small" data-act="l-add" data-bi="${bi}">+ 種目</button></div>
+    </div></div>`).join("")}
+    <div><button class="btn" data-act="b-add">+ ブロックを追加</button></div>
+    <label class="f">メモ(1行ずつ)<textarea data-k="${pre}.memo" rows="2">${esc(D.memo)}</textarea></label>
+    <p class="prev">重量に「80~85%」の形で書くと、選手の推定1RMから目安重量を表示します。基準種目を空欄にすると同じ種目の1RMを使います。</p>
+    ${probs.length?`<div class="banner warn">${probs.map(esc).join("<br>")}</div>`:""}
+    <div class="savebar ed-save">
+      <label class="f grow">変更内容(履歴に残ります)<input id="ed-note" value="${esc(edNote)}" placeholder="例:Week5からSQを3×3に変更"></label>
+      <button class="btn ghost" data-act="ed-reset" ${edDirty?"":"disabled"}>変更を破棄</button>
+      <button class="btn primary" data-act="ed-save" ${edDirty&&!probs.length?"":"disabled"}>${edDirty?"保存して全員に反映":"変更はありません"}</button>
+    </div>
+    <div class="ed-hist"><h3>更新履歴</h3>${!edHist?`<p class="prev">読み込み中…</p>`:edHist.error?`<p class="prev">${esc(edHist.error)}</p>`:!edHist.length?`<p class="prev">まだ保存していません(初期メニューを使用中)。</p>`:
+      edHist.map((h,i)=>`<div class="ed-hrow"><span class="d">${esc(h.at)}</span><span class="grow">${esc(h.note||"(メモなし)")}${i===0?' <span class="tag">使用中</span>':""}</span>${i===0?"":`<button class="btn small ghost" data-act="ed-load" data-i="${i}">この版を読み込む</button>`}</div>`).join("")}</div>`;
+}
+function edGet(path){return path.split(".").reduce((o,k)=>o[k],ed)}
+function edSet(path,val){const ks=path.split("."),last=ks.pop();ks.reduce((o,k)=>o[k],ed)[last]=val}
+const mv=(a,i,j)=>{if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]]};
+const blankLine=()=>({n:"",w:"",r:"",s:3,cue:"",tag:"",disp:"",base:""});
+const mev=$("#v-menu");
+mev.addEventListener("input",ev=>{const t=ev.target;if(t.id==="ed-note"){edNote=t.value;return}
+  const k=t.dataset.k;if(!k)return;edSet(k,t.value);
+  const was=edDirty;edDirty=true;
+  if(t.tagName==="SELECT"||!was)renderEditorKeep(t);
+  else{const p=edProblems(),sb=mev.querySelector('[data-act="ed-save"]');if(sb)sb.disabled=!!p.length}});
+mev.addEventListener("change",ev=>{if(ev.target.dataset.k&&ev.target.tagName!=="SELECT")renderEditorKeep(ev.target)});
+function renderEditorKeep(t){const id=t.dataset.k,pos=t.selectionStart;renderEditor();const n=mev.querySelector(`[data-k="${(typeof CSS!=="undefined"&&CSS.escape)?CSS.escape(id):id.replace(/"/g,"\\\"")}"]`);
+  if(n&&t.tagName!=="SELECT"&&document.activeElement!==n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}}
+mev.addEventListener("click",async ev=>{const b=ev.target.closest("button");if(!b||b.disabled)return;
+  const a=b.dataset.act,D=ed.days[edDay],bi=+b.dataset.bi,li=+b.dataset.li;
+  if(a!=="del-day")edDelDay=false;
+  if(a==="day"){edDay=+b.dataset.i;renderEditor();return}
+  if(a==="ed-save"){await saveProgram();return}
+  if(a==="ed-reset"){ed=toEd();edDirty=false;edDay=Math.min(edDay,ed.days.length-1);renderEditor();return}
+  if(a==="ed-load"){const h=edHist[+b.dataset.i];const keep={P:PROGRAM,H:PHASE};PROGRAM=h.data.program;PHASE={phase:h.data.phase,goal:h.data.goal};ed=toEd();PROGRAM=keep.P;PHASE=keep.H;
+    edDay=0;edDirty=true;edNote=`${h.at} の版に戻す`;renderEditor();toast("読み込みました。内容を確認して保存してください");return}
+  if(a==="add-day"){ed.days.push({label:"",sub:"",memo:"",blocks:[{cat:"str",lines:[blankLine()]}]});edDay=ed.days.length-1}
+  if(a==="dup-day"){ed.days.splice(edDay+1,0,JSON.parse(JSON.stringify(D)));ed.days[edDay+1].label="";edDay++}
+  if(a==="del-day"){if(!edDelDay){edDelDay=true;renderEditor();return}edDelDay=false;ed.days.splice(edDay,1);edDay=Math.max(0,edDay-1)}
+  if(a==="b-add")D.blocks.push({cat:"str",lines:[blankLine()]});
+  if(a==="b-up")mv(D.blocks,bi,bi-1);if(a==="b-down")mv(D.blocks,bi,bi+1);
+  if(a==="b-del")D.blocks.splice(bi,1);
+  if(a==="l-add")D.blocks[bi].lines.push(blankLine());
+  if(a==="l-up")mv(D.blocks[bi].lines,li,li-1);if(a==="l-down")mv(D.blocks[bi].lines,li,li+1);
+  if(a==="l-del"){D.blocks[bi].lines.splice(li,1);if(!D.blocks[bi].lines.length)D.blocks.splice(bi,1)}
+  edDirty=true;renderEditor();
+});
+async function saveProgram(){
+  const sb=mev.querySelector('[data-act="ed-save"]');sb.disabled=true;sb.textContent="保存中…";
+  try{const p=await gas("saveProgram",fromEd(),edNote,adminCode);applyProgram(p);edDirty=false;edNote="";ed=toEd();edDay=Math.min(edDay,ed.days.length-1);edHist=null;
+    toast("メニューを保存しました。選手の画面は再読み込みで反映されます");renderEditor();renderAll();loadEdHist()}
+  catch(e){toast("保存できませんでした:"+errMsg(e));renderEditor()}
+}
+
+/* ---------- admin login (passcode) ---------- */
+let adminCode=lsGet("plate.admin","")||"",admOpen=false;
+function renderAdminLink(init){const a=$("#adm-area");if(!a)return;
+  if(isCoach&&init&&!init.adminByCode){a.innerHTML="管理者(スクリプト所有者)として表示中";return}
+  if(isCoach){a.innerHTML=`管理者としてログイン中 · <button class="lnk" data-act="adm-out">ログアウト</button>`;return}
+  a.innerHTML=admOpen?`<input id="adm-code" type="password" placeholder="管理者パスコード" autocomplete="off"> <button class="btn small" data-act="adm-in">ログイン</button> <button class="lnk" data-act="adm-x">閉じる</button>`
+    :`<button class="lnk" data-act="adm-open">管理者ログイン</button>`}
+$("#adm-area").addEventListener("click",async ev=>{const b=ev.target.closest("button");if(!b)return;const a=b.dataset.act;
+  if(a==="adm-open"){admOpen=true;renderAdminLink();$("#adm-code")?.focus();return}
+  if(a==="adm-x"){admOpen=false;renderAdminLink();return}
+  if(a==="adm-out"){adminCode="";lsSet("plate.admin","");location.reload();return}
+  if(a==="adm-in"){const c=$("#adm-code").value.trim();if(!c)return;b.disabled=true;
+    try{const r=await gas("getInit",c);if(!r.adminByCode){toast("パスコードが違います");b.disabled=false;return}
+      adminCode=c;lsSet("plate.admin",c);isCoach=true;$("#tab-team").hidden=false;$("#tab-menu").hidden=false;admOpen=false;renderAdminLink(r);toast("管理者としてログインしました")}
+    catch(e){toast("ログインできませんでした:"+errMsg(e));b.disabled=false}}});
+$("#adm-area").addEventListener("keydown",ev=>{if(ev.key==="Enter"&&ev.target.id==="adm-code")$('[data-act="adm-in"]').click()});
+
+/* ---------- shell ---------- */
+function show(v){
+  ["record","history","progress","team","menu"].forEach(k=>{$("#v-"+k).hidden=k!==v;$("#tab-"+k).setAttribute("aria-selected",k===v)});
+  if(v==="history")renderHistory();if(v==="progress")renderProgress();
+  if(v==="team"){if(!team&&!teamLoading)loadTeam();else renderTeam()}
+  if(v==="menu")openEditor();
+}
+document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.v)));
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2400)}
+function renderAll(){
+  const active=document.activeElement&&rec.contains(document.activeElement)&&document.activeElement.tagName==="INPUT";
+  if(!active)renderRecord();
+  if(!$("#v-history").hidden)renderHistory();if(!$("#v-progress").hidden)renderProgress()}
+function onData(){usingSample=false;
+  if(!draft.id&&!touched()){const d=suggestDay();if(d!==draft.day||draft.week!==nextWeek(d)){draft=buildDraft(d);saveDraft()}}
+  renderAll()}
+
+/* boot */
+renderAll();show("record");
+const sel=$("#player");
+sel.addEventListener("change",()=>{player=sel.value;lsSet("plate.player",player);
+  if(!draft.id&&!touched())draft=buildDraft(dayKeys()[0]);loadHistory()});
+function teamGate(msg){
+  document.querySelector("nav.tabs").hidden=true;$("#player").disabled=true;
+  setStatus("チームパスコードを入力してください");
+  ["history","progress","team","menu"].forEach(k=>$("#v-"+k).hidden=true);$("#v-record").hidden=false;
+  $("#v-record").innerHTML=`<form class="gate" id="team-form"><b>チームパスコード</b>
+    <p class="prev" style="margin:4px 0 12px">コーチから伝えられたパスコードを入力してください。この端末では次回から入力不要です。</p>
+    <div class="row"><input id="team-code" type="password" autocomplete="off" class="grow" style="background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:16px;color:var(--fg)">
+    <button class="btn primary" type="submit">はじめる</button></div>${msg?`<p class="prev" style="color:var(--danger);margin:8px 0 0">${esc(msg)}</p>`:""}</form>`;
+  $("#team-form").addEventListener("submit",ev=>{ev.preventDefault();const v=$("#team-code").value.trim();if(!v)return;
+    teamCode=v;lsSet("plate.team",v);ev.target.querySelector("button").disabled=true;start()});
+  $("#team-code").focus();
+}
+async function start(){
+  try{
+    const init=await gas("getInit",adminCode);
+    document.querySelector("nav.tabs").hidden=false;$("#player").disabled=false;
+    if($("#team-form")){document.activeElement?.blur?.();$("#v-record").innerHTML=""}
+    roster=init.roster||[];isCoach=!!init.isCoach;$("#tab-team").hidden=!isCoach;$("#tab-menu").hidden=!isCoach;
+    if(adminCode&&!init.adminByCode){adminCode="";lsSet("plate.admin","")}renderAdminLink(init);
+    if(init.program)applyProgram(init.program);
+    const saved=lsGet("plate.player","");
+    player=roster.includes(saved)?saved:"";
+    sel.innerHTML=`<option value="">名前を選ぶ</option>`+roster.map(n=>`<option ${n===player?"selected":""}>${esc(n)}</option>`).join("");
+    if(player)await loadHistory();else{setStatus("名前を選ぶと記録が始められます");renderAll()}
+  }catch(e){
+    if(isTeamErr(e)){const had=!!teamCode;teamCode="";lsSet("plate.team","");teamGate(had?"パスコードが違います。もう一度入力してください":"");return}
+    setStatus("接続できませんでした:"+errMsg(e))}
+}
+start();
+})();
+</script>
+</body>
+</html>
