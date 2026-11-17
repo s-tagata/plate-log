@@ -175,6 +175,7 @@ table.team tbody tr:last-child td{border-bottom:0}
 .x:disabled{opacity:.3;cursor:default}
 .banner.warn{background:color-mix(in oklab,var(--danger) 14%,var(--surface));color:var(--fg)}
 .ed-save{align-items:end;border-top:1px solid var(--line);padding-top:14px}
+.ed-imp textarea{font:12px/1.5 ui-monospace,Menlo,monospace;min-height:110px}
 .ed-hist h3{font-size:13px;color:var(--muted);font-weight:500;margin:0 0 6px;letter-spacing:.04em}
 .ed-hrow{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;flex-wrap:wrap}
 .ed-hrow .d{font-family:var(--f-display);color:var(--muted);font-variant-numeric:tabular-nums}
@@ -215,7 +216,7 @@ h2.sec{margin:8px 0 0;font-size:15px;letter-spacing:.04em;border-top:1px solid v
   <section class="view" id="v-team" hidden></section>
   <section class="view" id="v-menu" hidden></section>
 </main>
-<footer class="wrap adm"><span id="adm-area"><button class="lnk" data-act="adm-open">管理者ログイン</button></span><div class="ver">Plate Log v2026.11.13 app</div></footer>
+<footer class="wrap adm"><span id="adm-area"><button class="lnk" data-act="adm-open">管理者ログイン</button></span><div class="ver">Plate Log v2026.11.18 app</div></footer>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -689,7 +690,7 @@ function applyProgram(p){
 }
 
 /* ---------- menu editor (coach only) ---------- */
-let ed=null,edDay=0,edDirty=false,edHist=null,edDelDay=false,edNote="";
+let ed=null,edDay=0,edDirty=false,edHist=null,edDelDay=false,edNote="",edImp=false;
 const TAGS={"":"通常","W-up":"W-up","Extra":"Extra"},DISP={"":"通常","opt":"任意(青)","hl":"強調(赤)"};
 function toEd(){return{phase:PHASE.phase,goal:PHASE.goal,days:dayKeys().map(k=>{const P=PROGRAM[k];return{label:P.label||"",sub:P.sub||"",memo:(P.memo||[]).join("\n"),
   blocks:P.blocks.map(b=>({cat:b.cat,lines:b.lines.map(l=>({n:l.n||"",w:l.w||"",r:l.r||"",s:l.s||1,cue:l.cue||"",tag:l.tag||"",disp:l.opt?"opt":l.hl?"hl":"",base:l.base||""}))}))}})}}
@@ -749,6 +750,9 @@ function renderEditor(){
       <button class="btn ghost" data-act="ed-reset" ${edDirty?"":"disabled"}>変更を破棄</button>
       <button class="btn primary" data-act="ed-save" ${edDirty&&!probs.length?"":"disabled"}>${edDirty?"保存して全員に反映":"変更はありません"}</button>
     </div>
+    <div class="ed-imp">${edImp?`<label class="f">メニューのテキストを貼り付け<textarea id="ed-imp-text" rows="5" spellcheck="false" placeholder='{"phase":"…","goal":"…","program":{…}}'></textarea></label>
+      <div class="row" style="gap:8px"><button class="btn small primary" data-act="imp-go">読み込む</button><button class="btn small ghost" data-act="imp-x">閉じる</button></div>`
+      :`<button class="btn small ghost" data-act="imp-open">テキストからメニューを読み込む</button>`}</div>
     <div class="ed-hist"><h3>更新履歴</h3>${!edHist?`<p class="prev">読み込み中…</p>`:edHist.error?`<p class="prev">${esc(edHist.error)}</p>`:!edHist.length?`<p class="prev">まだ保存していません(初期メニューを使用中)。</p>`:
       edHist.map((h,i)=>`<div class="ed-hrow"><span class="d">${esc(h.at)}</span><span class="grow">${esc(h.note||"(メモなし)")}${i===0?' <span class="tag">使用中</span>':""}</span>${i===0?"":`<button class="btn small ghost" data-act="ed-load" data-i="${i}">この版を読み込む</button>`}</div>`).join("")}</div>`;
 }
@@ -771,6 +775,13 @@ mev.addEventListener("click",async ev=>{const b=ev.target.closest("button");if(!
   if(a==="day"){edDay=+b.dataset.i;renderEditor();return}
   if(a==="ed-save"){await saveProgram();return}
   if(a==="ed-reset"){ed=toEd();edDirty=false;edDay=Math.min(edDay,ed.days.length-1);renderEditor();return}
+  if(a==="imp-open"){edImp=true;renderEditor();$("#ed-imp-text")?.focus();return}
+  if(a==="imp-x"){edImp=false;renderEditor();return}
+  if(a==="imp-go"){let p;try{p=JSON.parse($("#ed-imp-text").value.trim());if(p&&p.data&&p.data.program)p=p.data;
+      const ks=Object.keys(p.program||{});if(!ks.length||!ks.every(k=>/^[1-9]$/.test(k)&&Array.isArray(p.program[k].blocks)))throw 0}
+    catch(e){toast("読み込めませんでした。テキストを最初から最後まで貼り付けてください");return}
+    const keep={P:PROGRAM,H:PHASE};PROGRAM=p.program;PHASE={phase:p.phase||"",goal:p.goal||""};ed=toEd();PROGRAM=keep.P;PHASE=keep.H;
+    edDay=0;edDirty=true;edImp=false;edNote=p.note||"テキストから読み込み";renderEditor();scrollTo(0,0);toast("読み込みました。内容を確認して「保存して全員に反映」を押してください");return}
   if(a==="ed-load"){const h=edHist[+b.dataset.i];const keep={P:PROGRAM,H:PHASE};PROGRAM=h.data.program;PHASE={phase:h.data.phase,goal:h.data.goal};ed=toEd();PROGRAM=keep.P;PHASE=keep.H;
     edDay=0;edDirty=true;edNote=`${h.at} の版に戻す`;renderEditor();toast("読み込みました。内容を確認して保存してください");return}
   if(a==="add-day"){ed.days.push({label:"",sub:"",memo:"",blocks:[{cat:"str",lines:[blankLine()]}]});edDay=ed.days.length-1}
